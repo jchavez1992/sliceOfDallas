@@ -1,0 +1,35 @@
+{% extends "votingRecord/layout.html" %}
+
+{% block body %}
+
+<h1> Voting Record of
+    <a href="{% url 'bio' council_member.district %}">
+        {{ council_member.name }}</a>
+</h1>
+
+{% include "votingRecord/dropdown.html" %}
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col"> Name </th>
+        <th scope="col"> Agenda Item </th>
+        <th scope="col"> Vote </th>
+        <th scope="col"> Result </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for vote in vote_records %}
+        <tr>
+            <td> {{vote.voter.name}} </td>  <!-- ToDo: link to bio page-->
+            <td> {{vote.agenda_item.id}} </td> <!-- ToDo: Make link to agenda text -->
+            <td> {{vote.vote_for}} </td>
+            <td> {{vote.agenda_item.action}} </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}

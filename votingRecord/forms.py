@@ -7,4 +7,5 @@ class CMDropdown(forms.Form):
 
     cmembers = forms.ModelChoiceField(
         queryset=CouncilMember.objects.all().order_by("name")
+        # ToDo: add better label
     )

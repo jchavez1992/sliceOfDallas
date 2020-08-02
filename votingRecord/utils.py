@@ -1,15 +1,34 @@
 import csv
+import re
 from datetime import datetime
 from pathlib import Path
+import requests
+import filecmp
+from bs4 import BeautifulSoup
 from .models import CouncilMember, AgendaItem, Vote
 
 # ToDo: Change this to access the API
 path = Path('/Users/jchavez/Documents/CS33/DallasVoting/')
 
 
+def API_changed():
+
+    csv_get = requests.get("https://www.dallasopendata.com/resource/ts5d-gdq6.csv")
+
+    with open('temp.csv', 'w') as csv_in:
+        csv_in.write(csv_get.content)
+
+    diff = filecmp.cmp('temp.csv', 'ts5d-gdg6.csv')
+    if diff:
+        Path('temp.csv').replace('ts5d-gdq6.csv')
+        return True
+
+    return False
+
+
 def csv_to_model():
 
-    with open(path / 'akDallasVotes.csv') as csv_in:
+    with open(path / 'akDallasVotes.csv') as csv_in: # ToDo: path will be different
         reader = csv.DictReader(csv_in)
         for row in reader:
             dt = datetime.strptime(row['DATE'], '%m/%d/%Y')
@@ -32,3 +51,87 @@ def csv_to_model():
 
     # ToDo: Put some asserts in here to check the conversion to model went
     #   smoothly
+
+
+def find_bio(url):
+    """"
+    Given a url to dallascityhall.com bio page, it will return the contents
+    of the bio section
+    """
+    bio_page = requests.get(url)
+    soup = BeautifulSoup(bio_page.content, "html.parser")
+    bio_div = soup.find(id="ctl00_PlaceHolderMain_RichHtmlField2_"
+                           "_ControlWrapper_RichHtmlField")
+    bio_innerHTML = ""
+    for tag in bio_div:
+        bio_innerHTML = bio_innerHTML + str(tag)
+
+    bio_title = soup.find(id="ctl00_PlaceHolderMain_RichHtmlmaintitle_"
+                             "_ControlWrapper_RichHtmlField")
+    bio_title_innerHTML = ""
+    for tag in bio_title:
+        bio_title_innerHTML = bio_title_innerHTML + str(tag)
+
+    return bio_title_innerHTML, bio_innerHTML
+
+
+def meeting_link(html_file, agenda_id):
+
+    with open(html_file) as fp:
+        soup = BeautifulSoup(fp, "html.parser")
+
+    # Convert date in agenda id to the date format of calendar
+    mtg_mo = agenda_id[0:2]
+    mtg_day = agenda_id[2:4]
+    mtg_yr = agenda_id[4:6]
+    mtg_date = f'{mtg_mo}/{mtg_day}/20{mtg_yr}'
+
+    # find link in table.
+    date_td = soup.find(text=re.compile(mtg_date))
+    mtg_row = date_td.parent.parent
+    link_text = mtg_row.find(text=re.compile("^Meeting.details$"))
+    mtg_link = link_text.parent.attrs["href"]
+
+    # give back link
+    return mtg_link
+
+
+def meeting_table(html_file, agenda_id):
+    # Find link in calendar page
+    mtg_link = meeting_link(html_file, agenda_id)
+    agenda_item = agenda_id.split('_')[2]
+
+    # ToDo: put a test that the link has "MeetingDetail.aspx" in it
+
+    mtg_page = requests.get(mtg_link)
+    soup = BeautifulSoup(mtg_page.content, "html.parser")
+
+    # Find agenda item on table
+    table = soup.tbody
+    for row in table.contents:
+        try:
+            if agenda_item in row.contents[3].text:
+                row_with_item = row
+                break
+        except AttributeError:  # Not every element in table.contents is a Tag
+            pass
+
+    # ToDo: test that row_with_item is not null
+    table_link = row_with_item.a["href"]
+    # ToDo: test that table_link starts with "LegislationDetail"
+
+    full_link = f"https://cityofdallas.legistar.com/{table_link}&FullText=1"
+
+    return full_link
+
+
+def meeting_text(html_file, agenda_id):
+    legislation_url = meeting_table(html_file, agenda_id)
+
+    legislation_page = requests.get(legislation_url)
+    soup = BeautifulSoup(legislation_page.content, "html.parser")
+
+    # ToDo: Somehow getting double text
+    text = soup.find(id="ctl00_ContentPlaceHolder1_divText").contents[2]#.text
+
+    return text

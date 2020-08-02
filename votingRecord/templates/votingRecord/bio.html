@@ -1,0 +1,15 @@
+{% extends "votingRecord/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<h1> {{ bio_title | safe }} </h1>
+
+<!-- ToDo: put link to voting record here. -->
+
+{{ bio_contents | safe }}
+
+<!-- ToDo: Add form to edit - control wil JS-->
+
+
+{% endblock %}

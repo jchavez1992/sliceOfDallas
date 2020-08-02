@@ -1,3 +1,8 @@
+modules to install:
+pypdf2
+pdfminer
+
+
 
 File structure
 sliceOfDallas  
@@ -45,3 +50,4 @@ CouncilMember:
     
 ToDo: Districts
     
+https://cityofdallas.legistar.com/MeetingDetail.aspx?ID=606245&GUID=E64BAE2E-51B2-4D45-80F1-F27C62B10B24&Options=info|&Search=

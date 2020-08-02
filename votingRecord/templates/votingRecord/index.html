@@ -4,8 +4,9 @@
 
 <h1> Slice of Dallas </h1>
 
-<form>
-    {{ cm_dropdown }}
-</form>
+{% include "votingRecord/dropdown.html" %}
+
+<!-- ToDo: Try to show next council meeting agenda
+        Allow for comments in JS -->
 
 {% endblock %}

@@ -12,7 +12,7 @@ class AgendaItem(models.Model):
     date = models.DateField()
     type = models.CharField(max_length=100, choices=type_choices)
     action = models.CharField(max_length=100)
-    description = models.TextField()
+    title = models.TextField()
 
     def __str__(self):
         return f"{self.id}"
@@ -22,6 +22,7 @@ class CouncilMember(models.Model):
     name = models.CharField(max_length=100)
     district = models.IntegerField()  # ToDo: make foreign key to district
     role = models.CharField(max_length=100)
+    bio = models.TextField()
 
     def __str__(self):
         return f"{self.name}, {self.role} in district {self.district}"
@@ -41,3 +42,4 @@ class Vote(models.Model):
 # ToDo: Make District model
 """
 """
+
