@@ -1,7 +1,23 @@
+from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator
 from django.db import models
 
+
 # ToDo: check max_lengths on the CharFields
-# Create your models here.
+class User(AbstractUser):
+    # ToDo: make sure district field is in login
+    #district = models.IntegerField(
+    #    validators=[MaxValueValidator(14)]
+    #)
+    pass
+
+class Comment(models.Model):
+    user = models.ForeignKey('User', on_delete=models.CASCADE,
+                             related_name='writer')
+    agenda = models.ForeignKey('AgendaItem', on_delete=models.CASCADE)
+    text = models.TextField()
+
+
 class AgendaItem(models.Model):
     AGENDA = 'Agenda'
     ADDENDUM = 'Addendum'
@@ -14,6 +30,9 @@ class AgendaItem(models.Model):
     action = models.CharField(max_length=100)
     title = models.TextField()
 
+    class Meta:
+        ordering = ["-date", "id"]
+
     def __str__(self):
         return f"{self.id}"
 
@@ -25,7 +44,7 @@ class CouncilMember(models.Model):
     bio = models.TextField()
 
     def __str__(self):
-        return f"{self.name}, {self.role} in district {self.district}"
+        return f"{self.id}: {self.name}, {self.role} in district {self.district}"
 
 
 class Vote(models.Model):

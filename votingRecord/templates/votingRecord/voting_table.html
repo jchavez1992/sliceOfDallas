@@ -3,11 +3,13 @@
 {% block body %}
 
 <h1> Voting Record of
-    <a href="{% url 'bio' council_member.district %}">
-        {{ council_member.name }}</a>
+    <a href="{% url 'votingRecord:bio' council_member.id %}">
+        {{ council_member.name }} </a>
 </h1>
 
+<span>
 {% include "votingRecord/dropdown.html" %}
+</span>
 
 <table class="table">
     <thead>
@@ -22,8 +24,9 @@
     <tbody>
     {% for vote in vote_records %}
         <tr>
-            <td> {{vote.voter.name}} </td>  <!-- ToDo: link to bio page-->
-            <td> {{vote.agenda_item.id}} </td> <!-- ToDo: Make link to agenda text -->
+            <td> {{vote.voter.name}} </td>
+            <td> <a href="{% url 'votingRecord:agenda_text' vote.agenda_item.id %}">
+                {{vote.agenda_item.id}} </a> </td>
             <td> {{vote.vote_for}} </td>
             <td> {{vote.agenda_item.action}} </td>
         </tr>

@@ -1,0 +1,38 @@
+{% extends "votingRecord/layout.html" %}
+{% load static %}
+
+
+
+{% block body %}
+
+<h1> Future agenda items </h1>
+
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col"> LINK TO TEXT </th>
+        <th scope="col"> Agenda Item </th>
+        <th scope="col"> Type </th>
+        <th scope="col"> Title </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for item in council_meeting_agenda %}
+    <tr>
+        <td>
+            <a href="{% url 'votingRecord:agenda_text' item.text %}"> Text </a>
+        </td>  <!-- ToDo: link to text -->
+        <td> {{item.number}} </td> <!-- ToDo: Make link to agenda text -->
+        <td> {{item.type}} </td>
+        <td> {{item.title}} </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<!-- ToDo: show comment form -->
+
+
+{% endblock %}

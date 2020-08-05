@@ -1,15 +1,28 @@
 {% extends "votingRecord/layout.html" %}
 {% load static %}
 
+
+{% block script %}
+    <script src="{% static 'votingRecord/bio_votingRecord' %}"> </script>
+{% endblock %}
+
 {% block body %}
 
 <h1> {{ bio_title | safe }} </h1>
 
 <!-- ToDo: put link to voting record here. -->
 
-{{ bio_contents | safe }}
+<form id="show_vr" action="{% url 'votingRecord:voting_table' %}" method="post">
+    {% csrf_token %}
+    <label>
+        Show Voting Record for {{council_member.name}}
+        <input hidden name="cmembers" value ="{{council_member.id}}">
+        <input type="submit" name="Show">
+    </label>
+</form>
 
-<!-- ToDo: Add form to edit - control wil JS-->
+
+{{ bio_contents | safe }}
 
 
 {% endblock %}

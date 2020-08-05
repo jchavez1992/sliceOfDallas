@@ -81,6 +81,7 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = "votingRecord.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -121,3 +122,12 @@ DATE_INPUT_FORMATS = ['%d-%m-%Y', '%d/%m/%Y', '%d/%m/%y']
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Set up a cache data base for the agenda texts
+#
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache_table',
+    }
+}

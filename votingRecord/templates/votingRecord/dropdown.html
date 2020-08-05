@@ -1,6 +1,7 @@
 
-<form id="cm_dropdown" action="{% url 'voting_table' %}" method="post">
+<form id="cm_dropdown" action="{% url 'votingRecord:voting_table' %}" method="post">
     {% csrf_token %}
     {{ cm_dropdown }}
-    <input type="submit" value="Create" />
+    <input type="submit" value="Show" />
 </form>
+

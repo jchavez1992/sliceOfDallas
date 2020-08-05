@@ -1,7 +1,11 @@
-modules to install:
-pypdf2
-pdfminer
+Issues: tried to grab future meeting agenda item texts, but the link to the text
+dissappeared (from Aug 2 to Aug 3). 
 
+Features to highlight:
+Caching of bio and agenda text
+
+Limitations:
+I dont' make any distinctions between current and past mayors and council members
 
 
 File structure

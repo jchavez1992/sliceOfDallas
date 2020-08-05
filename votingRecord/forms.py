@@ -6,6 +6,6 @@ from .models import CouncilMember, Vote
 class CMDropdown(forms.Form):
 
     cmembers = forms.ModelChoiceField(
-        queryset=CouncilMember.objects.all().order_by("name")
-        # ToDo: add better label
+        queryset=CouncilMember.objects.all().order_by("name"),
+        label="Council Member"
     )
