@@ -2,15 +2,17 @@
 
 {% block body %}
 
-<h1> Slice of Dallas </h1>
+<div class="jumbotron">
 
-{% include "votingRecord/dropdown.html" %}
+    <h1> Slice of Dallas </h1>
+    {% include "votingRecord/dropdown.html" %}
+</div>
 
+<!-- This link died while working on this project (between 2 Aug and 3 Aug )
+    Reactivate if it becomes available again
 <a href="{% url 'votingRecord:future_meeting' %}">
     See the agenda for the next council meeting
 </a>
-
-<!-- ToDo: Try to show next council meeting agenda
-        Allow for comments in JS -->
+-->
 
 {% endblock %}

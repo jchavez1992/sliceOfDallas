@@ -2,30 +2,42 @@
 {% load static %}
 
 {% block script %}
-    <script src="{% static 'votingRecord/agendaComment' %}"> </script>
+    <script src="{% static 'votingRecord/agendaComment.js' %}"> </script>
 {% endblock %}
 
 {% block body %}
 
 <h1 id="agenda_id"> {{agenda_id}} </h1>
 
-<!-- ToDo: add link to agenda item page at legistar for attatchments-->
-
 {{text | safe}}
 
-<!-- ToDo:
-    1)Display previous comments
-    2) Form should only be visible to logged-in users -->
+Link to <a href="{{full_url}}">cityofdallas.legistar.com</a> for attachments.
 
+<div id="comment_list" class="list-group">
+{% for comment in comments %}
+        <div class="post_div list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                {{comment.text}}
+                <small>
+                    {{comment.user}}
+                </small>
+            </div>
+        </div>
+{% endfor %}
+</div>
+
+{% if user.is_authenticated %}
 <div id="div_agenda_comment">
     <form id="agenda_form">
         {% csrf_token %}
-        <input disabled value="{{ request.user.username }}">
+        <input disabled name="username" value="{{ request.user.username }}">
         <label>
             Comment:
             <textarea id="agenda_comment"></textarea>
         </label>
+        <input type="submit" value="Submit">
     </form>
 </div>
+{% endif %}
 
 {% endblock %}

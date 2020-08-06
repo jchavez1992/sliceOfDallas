@@ -11,5 +11,6 @@ urlpatterns = [
     path("voting_table", views.voting_table, name="voting_table"),
     path("future_agenda", views.future_meeting, name="future_meeting"),
     path("bio/<int:council_member_id>", views.bio, name="bio"),
+    path("agenda_text/post_comment", views.post_comment, name="post_comment"),
     path("agenda_text/<str:agenda_id>", views.agenda_text, name="agenda_text")
 ]

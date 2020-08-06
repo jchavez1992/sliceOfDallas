@@ -23,16 +23,13 @@
     <tr>
         <td>
             <a href="{% url 'votingRecord:agenda_text' item.text %}"> Text </a>
-        </td>  <!-- ToDo: link to text -->
-        <td> {{item.number}} </td> <!-- ToDo: Make link to agenda text -->
+        </td>
+        <td> {{item.number}} </td>
         <td> {{item.type}} </td>
         <td> {{item.title}} </td>
     </tr>
     {% endfor %}
     </tbody>
 </table>
-
-<!-- ToDo: show comment form -->
-
 
 {% endblock %}

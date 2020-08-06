@@ -15,7 +15,6 @@ from bs4 import BeautifulSoup
 
 # Create your views here.
 def index(request):
-    # ToDo: have it check the API at this stage
     updated = utils.API_changed()
     if updated:
         utils.csv_to_model()
@@ -34,7 +33,7 @@ def voting_table(request):
         form = CMDropdown(request.POST)
         c_member = form.data["cmembers"]  # If it comes from the bio, it won't validate
         if form.is_valid():
-            c_member=form.cleaned_data["cmembers"]
+            c_member = form.cleaned_data["cmembers"]
 
         if type(c_member) is str:   # If it came from the bio, it will be an id
             c_member = CouncilMember.objects.get(id=c_member)
@@ -50,13 +49,11 @@ def voting_table(request):
         return HttpResponseRedirect(reverse("votingRecord:index"))
 
 
-@cache_page(60 * 60)  # ToDo: change to 86400
+@cache_page(864000)  # Cache for a day
 def bio(request, council_member_id):
 
     council_member = CouncilMember.objects.get(id=council_member_id)
     bio_title, bio_html = utils.find_bio(council_member_id)
-
-    # ToDo store bio in database?
 
     http_return = render(request, "votingRecord/bio.html", {
         "bio_title": bio_title,
@@ -67,7 +64,7 @@ def bio(request, council_member_id):
     return http_return
 
 
-@cache_page(60 * 60)  # ToDo: change to 86400
+@cache_page(864000)  # Cache for a day
 def agenda_text(request, agenda_id):
     if agenda_id[0:3] == 'Leg':
         url = f"https://cityofdallas.legistar.com/{agenda_id}&FullText=1"
@@ -77,25 +74,27 @@ def agenda_text(request, agenda_id):
         yr = agenda_id[4:6]
         if int(yr) < 19:
             return HttpResponseNotFound('<h1>Only available for meetings in 2019'
-                    ' and later</h1> <br> See '
-                    '<a href="https://dallascityhall.com/government/Pages/Council-Agenda.aspx">'
+                    ' and later</h1> <br> See <a href='
+                    '"https://dallascityhall.com/government/Pages/Council-Agenda.aspx">'
                     'this page </a> for older agendas.'
-        )
-        # ToDo need path to be relative
-        calendar_page = \
-            f"/Users/jchavez/Documents/CS33/sliceOfDallas/DallasCityCouncilCalendar20{yr}.html"
+            )
+
+        calendar_page = f"DallasCityCouncilCalendar20{yr}.html"
         meeting_text, url = utils.meeting_text(calendar_page, agenda_id)
+
+    comments = Comment.objects.filter(agenda=agenda_id)
 
     http_return = render(request, "votingRecord/agenda_text.html", {
         "text": meeting_text,
         "agenda_id": agenda_id,
-        "full_url": url
+        "full_url": url,
+        "comments": comments
     })
 
     return http_return
 
 
-@cache_page(60 * 60)  # ToDo: change to 86400
+@cache_page(864000)  # Cache for a day
 def future_meeting(request):
     # CityCouncil meetings calendar:
     city_council_mtg = \
@@ -133,12 +132,16 @@ def post_comment(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
 
-    # ToDo: Double-check data is not empty Test for it?
     data = json.loads(request.body)
+    if data.get("agenda_id") is not None:
+        agenda = AgendaItem.objects.get(id=data.get('agenda_id'))
+    else:
+        return JsonResponse({"error": "agenda id required"}, status=400)
 
     new_comment = Comment(
         user=request.user,
-        text=data.content
+        text=data.get("content"),
+        agenda=agenda
     )
     new_comment.save()
 
@@ -156,7 +159,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse("votingRecord:index"))
         else:
             return render(request, "votingRecord/login.html", {
                 "message": "Invalid username and/or password."

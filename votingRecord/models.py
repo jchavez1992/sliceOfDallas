@@ -3,13 +3,9 @@ from django.core.validators import MaxValueValidator
 from django.db import models
 
 
-# ToDo: check max_lengths on the CharFields
 class User(AbstractUser):
-    # ToDo: make sure district field is in login
-    #district = models.IntegerField(
-    #    validators=[MaxValueValidator(14)]
-    #)
     pass
+
 
 class Comment(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE,
@@ -23,11 +19,11 @@ class AgendaItem(models.Model):
     ADDENDUM = 'Addendum'
     type_choices = [(AGENDA, 'Agenda'),
                     (ADDENDUM, 'Addendum')]
-    id = models.CharField(max_length=100, primary_key=True)
-    number = models.CharField(max_length=100)
+    id = models.CharField(max_length=15, primary_key=True)
+    number = models.CharField(max_length=5)  # Some numbers start with Z or PH
     date = models.DateField()
-    type = models.CharField(max_length=100, choices=type_choices)
-    action = models.CharField(max_length=100)
+    type = models.CharField(max_length=50, choices=type_choices)
+    action = models.CharField(max_length=300)  # Some are a small paragraph
     title = models.TextField()
 
     class Meta:
@@ -38,27 +34,22 @@ class AgendaItem(models.Model):
 
 
 class CouncilMember(models.Model):
-    name = models.CharField(max_length=100)
-    district = models.IntegerField()  # ToDo: make foreign key to district
-    role = models.CharField(max_length=100)
+    name = models.CharField(max_length=50)
+    district = models.IntegerField()
+    role = models.CharField(max_length=25)
     bio = models.TextField()
 
     def __str__(self):
-        return f"{self.id}: {self.name}, {self.role} in district {self.district}"
+        return f"{self.name}, {self.role} district: {self.district}"
 
 
 class Vote(models.Model):
     voter = models.ForeignKey('CouncilMember', on_delete=models.PROTECT)
     agenda_item = models.ForeignKey('AgendaItem', on_delete=models.PROTECT)
-    vote_for = models.CharField(max_length=100)  # ToDo make Boolean?
+    vote_for = models.CharField(max_length=100)
 
     def __str__(self):
         return f"{self.voter.name} " \
                f"voted {self.vote_for}" \
                f" on {self.agenda_item.id}"
-
-
-# ToDo: Make District model
-"""
-"""
 
